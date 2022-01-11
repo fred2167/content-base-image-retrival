@@ -17,7 +17,7 @@ def displayResults(queryState, paths, num_columns = 3, num_rows = 3):
                 return
             
             with cols[i]:
-                st.image(paths[img_idx][0], caption=f"{paths[img_idx][1]:.4f}")
+                st.image(paths[img_idx][0], caption=f"{helper.getImageSortKey(paths[img_idx][0])}: {paths[img_idx][1]:.4f}")
 
             img_idx += 1
 
@@ -34,8 +34,8 @@ def changeState(idx, step):
         if step < 0 and st.session_state[idx] == 0:
             return 0
 
-        if step > 0 and st.session_state[idx] == 10:
-            return 10
+        if step > 0 and st.session_state[idx] == 4:
+            return 4
 
         st.session_state[idx] += step
         return st.session_state[idx]
@@ -72,4 +72,4 @@ if __name__ == "__main__":
     else:
         queryState = changeState(queryIdx, 0)
     
-    displayResults(queryState, closest_match_paths)
+    displayResults(queryState, closest_match_paths, 4, 5)
