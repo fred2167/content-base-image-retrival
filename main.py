@@ -17,7 +17,7 @@ def displayResults(queryState, paths, num_columns = 3, num_rows = 3):
                 return
             
             with cols[i]:
-                st.image(paths[img_idx][0], caption=f"{helper.getImageSortKey(paths[img_idx][0])}: {paths[img_idx][1]:.4f}")
+                st.image(paths[img_idx][0], caption=f"{helper.getImageSortKey(paths[img_idx][0])}.jpg: {paths[img_idx][1]:.4f}")
 
             img_idx += 1
 

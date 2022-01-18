@@ -29,7 +29,7 @@ def intensityHistogram(img_paths):
 
     hist = hist / intensity.size # normalize each bin with the size of the image to get probability distribution
     
-    assert  1 - hist.sum() < 1e-5, f"{hist.sum()}" # checking sum of probability distribution equal to 1
+    # assert  1 - hist.sum() < 1e-5, f"{hist.sum()}" # checking sum of probability distribution equal to 1
 
     features.append(hist)
   
@@ -54,7 +54,7 @@ def colorCodeHistogram(img_paths):
 
     hist = hist / colorCode.size # normalize with size of image to get probability distribution
 
-    assert  1 - hist.sum() < 1e-5, f"{hist.sum()}" # checking sum of probability distribution equal to 1
+    # assert  1 - hist.sum() < 1e-5, f"{hist.sum()}" # checking sum of probability distribution equal to 1
 
     features.append(hist)
   
