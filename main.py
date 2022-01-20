@@ -3,11 +3,24 @@ import os
 import helper
 import histogram
 import distance
-
+import collections
 
 def displayResults(queryState, paths, num_columns = 3, num_rows = 3):
-    img_idx = queryState * num_columns * num_rows
 
+    def sortByRank(pathsOfPaths):
+
+        pathToWeights = collections.defaultdict(int)
+        for paths in pathsOfPaths:
+            num_path = len(paths)
+            for i, path in enumerate(paths):
+                pathToWeights[path] += 1 - 1/(num_path - i)
+        
+
+        weightsByOrder = dict(sorted(pathToWeights.items(), key= lambda item: -item[1]))
+        return list(weightsByOrder.keys())
+    
+    paths = sortByRank([paths])
+    img_idx = queryState * num_columns * num_rows
     for i in range(num_rows):
         cols = st.columns(num_columns)
         
@@ -17,7 +30,7 @@ def displayResults(queryState, paths, num_columns = 3, num_rows = 3):
                 return
             
             with cols[i]:
-                st.image(paths[img_idx][0], caption=f"{helper.getImageSortKey(paths[img_idx][0])}.jpg: {paths[img_idx][1]:.4f}")
+                st.image(paths[img_idx], caption=f"{helper.getImageSortKey(paths[img_idx])}.jpg")
 
             img_idx += 1
 
@@ -46,11 +59,11 @@ if __name__ == "__main__":
     img_folder = os.path.join(os.getcwd(), "retrival-images")
     img_paths = helper.getImagePaths(img_folder)
 
-    feature_fn_str = st.sidebar.radio("Features", ("Intensity", "Color Code"))
+    feature_fn_str = st.sidebar.radio("Features", ("Intensity", "Color Code", "Neural Network"))
+    # feature_fn_str = st.sidebar.multiselect("Features", ("Intensity", "Color Code", "Neural Network"), default="Intensity")
+
     features = histogram.getFeatures(feature_fn_str, img_paths)
 
-    distance_fn_str = st.sidebar.radio("Distance Function", ("Manhantan Distance",))
-    distance_fn = distance.getDistance_fn(distance_fn_str)
     st.title('Content Base Image Retrival')
 
     queryIdx = st.number_input("image ID (between 1 and 100)", min_value=1, max_value=100, value=1, step=1)
@@ -58,9 +71,12 @@ if __name__ == "__main__":
     st.image(img_paths[queryIdx])
 
     st.header("Results")
-
-    closestIdx, dists = distance_fn(queryIdx, features, 100)
-    closest_match_paths = [(img_paths[j], dists[i]) for i, j in enumerate(closestIdx)]
+    
+    
+    if feature_fn_str in ["Intensity", "Color Code"]:
+        closest_match_paths = distance.manhantanDistance(queryIdx, img_paths, features)
+    else:
+        closest_match_paths = distance.localSensitiveHash(queryIdx, img_paths, features)
 
     prev_flag = st.button("Previous")
     next_flag = st.button("Next Page")

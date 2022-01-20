@@ -1,13 +1,15 @@
 import streamlit as st
 import numpy as np
 import imageio
-import glob
+import nn
 
 @st.cache
 def getFeatures(feature_fn_str, img_paths):
   
   if feature_fn_str == "Intensity":
     features = intensityHistogram(img_paths)
+  elif feature_fn_str == "Neural Network":
+    features = neuralNetworkHistogram(img_paths)
   else:
     features = colorCodeHistogram(img_paths)
 
@@ -60,4 +62,11 @@ def colorCodeHistogram(img_paths):
   
   features = np.stack(features)
 
+  return features
+
+
+def neuralNetworkHistogram(img_paths):
+  model = nn.PretrainModel()
+  tensors = nn.imgPathsToTensors(img_paths)
+  features = model(tensors)
   return features
