@@ -1,5 +1,6 @@
 import os
 import glob
+import numpy as np
 import streamlit as st
 
 def getImageSortKey(path):
@@ -12,3 +13,21 @@ def getImagePaths(img_folder):
     img_paths = glob.glob(img_folder + "/*.jpg")
     img_paths.sort(key = getImageSortKey)
     return img_paths
+
+def getRelevantFeatures(features, featureIdx):
+    idx = np.array(list(featureIdx))
+    return features[idx]
+
+def getFeatureWeights(posFeatures, eps = 1e-6):
+    std = posFeatures.std(axis= 0)
+    avg = posFeatures.mean(axis= 0)
+
+    idxToZero = np.logical_and(std == 0, avg == 0)
+    idxToAvg = np.logical_and(std == 0, avg != 0)
+    minStd = np.min(std[std != 0]) if len(std[std != 0]) > 0 else 0
+
+    weights =  1 / (std + eps)
+    weights[idxToZero] = 0
+    weights[idxToAvg] = minStd / 2
+    weights /= weights.sum()
+    return weights

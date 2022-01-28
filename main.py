@@ -75,10 +75,12 @@ if __name__ == "__main__":
     if feature_fn_str == "Neural Network":
         closest_match_paths = distance.localSensitiveHash(queryIdx, img_paths, features)
     else:
-        if relevance_flag:
-            weights = None
-        else:
-            weights = None
+        
+        weights = None
+        if relevance_flag and len(st.session_state["relevanceIdx"]) > 0:
+            relevantFeatures = helper.getRelevantFeatures(features, st.session_state["relevanceIdx"])
+            weights = helper.getFeatureWeights(relevantFeatures)
+            
         closest_match_paths = distance.manhantanDistance(queryIdx, img_paths, features, weights)
 
     # closest_match_paths = getClosetPaths(feature_fn_strs, queryIdx, img_paths)
