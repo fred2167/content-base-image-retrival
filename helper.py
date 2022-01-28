@@ -29,5 +29,11 @@ def getFeatureWeights(posFeatures, eps = 1e-6):
     weights =  1 / (std + eps)
     weights[idxToZero] = 0
     weights[idxToAvg] = minStd / 2
-    weights /= weights.sum()
+
+    if weights.sum() != 0:
+      weights /= weights.sum()
+    else:
+      N = posFeatures.shape[1]
+      weights = np.ones((1, N)) / N
+      
     return weights

@@ -10,12 +10,6 @@ import collections
 
 def displayResults(queryState, paths, relevance_flag = False, num_columns = 3, num_rows = 3, ):
 
-    def updateRelevanceIdx(idx):
-        if idx not in st.session_state["relevanceIdx"]:
-            st.session_state["relevanceIdx"].add(idx)
-        else:
-            st.session_state["relevanceIdx"].remove(idx)
-
     img_idx = queryState * num_columns * num_rows
 
     for i in range(num_rows):
@@ -33,7 +27,7 @@ def displayResults(queryState, paths, relevance_flag = False, num_columns = 3, n
                     img_feature_idx = helper.getImageSortKey(paths[img_idx]) - 1
                     bottom = st.checkbox("Relevance", key=f"r{img_idx}")
                     if bottom:
-                        updateRelevanceIdx(img_feature_idx)
+                        st.session_state["relevanceIdx"].add(img_feature_idx)
                 
 
             img_idx += 1
@@ -104,6 +98,7 @@ if __name__ == "__main__":
     if relevance_flag:
         with st.form("relevance block", clear_on_submit=True):
             submitted = st.form_submit_button("Submit")
+            st.session_state["relevanceIdx"].add(queryIdx)
             displayResults(queryState, closest_match_paths, relevance_flag, 4, 5)
     else:
         displayResults(queryState, closest_match_paths, relevance_flag, 4, 5)
