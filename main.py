@@ -1,4 +1,3 @@
-from turtle import update
 import streamlit as st
 import os
 import helper
