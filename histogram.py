@@ -8,10 +8,12 @@ def getFeatures(feature_fn_str, img_paths):
   
   if feature_fn_str == "Intensity":
     features = intensityHistogram(img_paths)
+  elif feature_fn_str == "ColorCode":
+    features = colorCodeHistogram(img_paths)
   elif feature_fn_str == "Neural Network":
     features = neuralNetworkHistogram(img_paths)
   else:
-    features = colorCodeHistogram(img_paths)
+    features = intensityColorCodeHistogram(img_paths)
 
   return features
 
@@ -62,6 +64,16 @@ def colorCodeHistogram(img_paths):
   
   features = np.stack(features)
 
+  return features
+
+def intensityColorCodeHistogram(img_paths):
+  intensityFeat = intensityHistogram(img_paths)
+  colorCodeFeat = colorCodeHistogram(img_paths)
+
+  features = np.concatenate((intensityFeat, colorCodeFeat), axis= 1)
+
+  # whiten : mean = 0, std = 1
+  features = (features - features.mean(axis=0, keepdims=True)) / (features.std(axis=0, ddof=1, keepdims=True) + 1e-8) 
   return features
 
 

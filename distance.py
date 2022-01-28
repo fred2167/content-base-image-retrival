@@ -3,11 +3,17 @@ import streamlit as st
 import nn
 
 
-def manhantanDistance(queryIdx, img_paths, features):
+def manhantanDistance(queryIdx, img_paths, features, weights=None):
 
     query = features[queryIdx, :].reshape(1, -1)
 
-    l1 = np.abs(query - features).sum(axis=1)
+    l1 = np.abs(query - features)
+  
+    if weights is not None:
+        # assert weights.sum() - 1 < 1e-4, f"weights is not normalized"
+        l1 *= weights
+
+    l1 = l1.sum(axis=1)
     smallestDistanceIndex = l1.argsort()
 
     results = [img_paths[i] for i in smallestDistanceIndex if i != queryIdx]

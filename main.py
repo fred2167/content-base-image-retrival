@@ -58,7 +58,7 @@ if __name__ == "__main__":
     img_folder = os.path.join(os.getcwd(), "retrival-images")
     img_paths = helper.getImagePaths(img_folder)
 
-    feature_fn_str = st.sidebar.radio("Features", ("Intensity", "Color Code", "Neural Network"))
+    feature_fn_str = st.sidebar.radio("Features", ("Intensity", "Color Code", "Intensity + Color Code", "Neural Network"))
     relevance_flag = st.sidebar.checkbox("Relevance")
     # feature_fn_strs = st.sidebar.multiselect("Features", ("Intensity", "Color Code", "Neural Network"), default="Intensity")
 
@@ -72,10 +72,14 @@ if __name__ == "__main__":
     
     features = histogram.getFeatures(feature_fn_str, img_paths)
     
-    if feature_fn_str in ["Intensity", "Color Code"]:
-        closest_match_paths = distance.manhantanDistance(queryIdx, img_paths, features)
-    else:
+    if feature_fn_str == "Neural Network":
         closest_match_paths = distance.localSensitiveHash(queryIdx, img_paths, features)
+    else:
+        if relevance_flag:
+            weights = None
+        else:
+            weights = None
+        closest_match_paths = distance.manhantanDistance(queryIdx, img_paths, features, weights)
 
     # closest_match_paths = getClosetPaths(feature_fn_strs, queryIdx, img_paths)
 
