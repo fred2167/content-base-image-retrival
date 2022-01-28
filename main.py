@@ -5,22 +5,10 @@ import histogram
 import distance
 import collections
 
-def displayResults(queryState, paths, num_columns = 3, num_rows = 3):
+def displayResults(queryState, paths, relevance_flag = False, num_columns = 3, num_rows = 3, ):
 
-    def sortByRank(pathsOfPaths):
-
-        pathToWeights = collections.defaultdict(int)
-        for paths in pathsOfPaths:
-            num_path = len(paths)
-            for i, path in enumerate(paths):
-                pathToWeights[path] += 1 - 1/(num_path - i)
-        
-
-        weightsByOrder = dict(sorted(pathToWeights.items(), key= lambda item: -item[1]))
-        return list(weightsByOrder.keys())
-    
-    paths = sortByRank([paths])
     img_idx = queryState * num_columns * num_rows
+    
     for i in range(num_rows):
         cols = st.columns(num_columns)
         
@@ -31,6 +19,16 @@ def displayResults(queryState, paths, num_columns = 3, num_rows = 3):
             
             with cols[i]:
                 st.image(paths[img_idx], caption=f"{helper.getImageSortKey(paths[img_idx])}.jpg")
+                
+                if relevance_flag:
+                    img_relevance_flag = st.checkbox("Relevance", key=img_idx+1)
+
+                    img_feature_idx = helper.getImageSortKey(paths[img_idx]) - 1
+                    if img_relevance_flag:
+                        st.session_state["relevanceIdx"].add(img_feature_idx)
+                    else:
+                        if img_feature_idx in st.session_state["relevanceIdx"]:
+                            st.session_state["relevanceIdx"].remove(img_feature_idx)
 
             img_idx += 1
 
@@ -42,6 +40,7 @@ def changeState(idx, step):
     if idx not in st.session_state:
         clearCache()
         st.session_state[idx] = 0
+        st.session_state["relevanceIdx"] = set()
         return 0
     else:
         if step < 0 and st.session_state[idx] == 0:
@@ -60,9 +59,8 @@ if __name__ == "__main__":
     img_paths = helper.getImagePaths(img_folder)
 
     feature_fn_str = st.sidebar.radio("Features", ("Intensity", "Color Code", "Neural Network"))
-    # feature_fn_str = st.sidebar.multiselect("Features", ("Intensity", "Color Code", "Neural Network"), default="Intensity")
-
-    features = histogram.getFeatures(feature_fn_str, img_paths)
+    relevance_flag = st.sidebar.checkbox("Relevance")
+    # feature_fn_strs = st.sidebar.multiselect("Features", ("Intensity", "Color Code", "Neural Network"), default="Intensity")
 
     st.title('Content Base Image Retrival')
 
@@ -72,11 +70,14 @@ if __name__ == "__main__":
 
     st.header("Results")
     
+    features = histogram.getFeatures(feature_fn_str, img_paths)
     
     if feature_fn_str in ["Intensity", "Color Code"]:
         closest_match_paths = distance.manhantanDistance(queryIdx, img_paths, features)
     else:
         closest_match_paths = distance.localSensitiveHash(queryIdx, img_paths, features)
+
+    # closest_match_paths = getClosetPaths(feature_fn_strs, queryIdx, img_paths)
 
     prev_flag = st.button("Previous")
     next_flag = st.button("Next Page")
@@ -88,4 +89,6 @@ if __name__ == "__main__":
     else:
         queryState = changeState(queryIdx, 0)
     
-    displayResults(queryState, closest_match_paths, 4, 5)
+    displayResults(queryState, closest_match_paths, relevance_flag, 4, 5)
+
+    st.sidebar.write(str(st.session_state["relevanceIdx"]))
