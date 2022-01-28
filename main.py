@@ -1,3 +1,4 @@
+from turtle import update
 import streamlit as st
 import os
 import helper
@@ -5,10 +6,18 @@ import histogram
 import distance
 import collections
 
+
+
 def displayResults(queryState, paths, relevance_flag = False, num_columns = 3, num_rows = 3, ):
 
+    def updateRelevanceIdx(idx):
+        if idx not in st.session_state["relevanceIdx"]:
+            st.session_state["relevanceIdx"].add(idx)
+        else:
+            st.session_state["relevanceIdx"].remove(idx)
+
     img_idx = queryState * num_columns * num_rows
-    
+
     for i in range(num_rows):
         cols = st.columns(num_columns)
         
@@ -21,14 +30,11 @@ def displayResults(queryState, paths, relevance_flag = False, num_columns = 3, n
                 st.image(paths[img_idx], caption=f"{helper.getImageSortKey(paths[img_idx])}.jpg")
                 
                 if relevance_flag:
-                    img_relevance_flag = st.checkbox("Relevance", key=img_idx+1)
-
                     img_feature_idx = helper.getImageSortKey(paths[img_idx]) - 1
-                    if img_relevance_flag:
-                        st.session_state["relevanceIdx"].add(img_feature_idx)
-                    else:
-                        if img_feature_idx in st.session_state["relevanceIdx"]:
-                            st.session_state["relevanceIdx"].remove(img_feature_idx)
+                    bottom = st.checkbox("Relevance", key=f"r{img_idx}")
+                    if bottom:
+                        updateRelevanceIdx(img_feature_idx)
+                
 
             img_idx += 1
 
@@ -75,7 +81,6 @@ if __name__ == "__main__":
     if feature_fn_str == "Neural Network":
         closest_match_paths = distance.localSensitiveHash(queryIdx, img_paths, features)
     else:
-        
         weights = None
         if relevance_flag and len(st.session_state["relevanceIdx"]) > 0:
             relevantFeatures = helper.getRelevantFeatures(features, st.session_state["relevanceIdx"])
@@ -95,6 +100,15 @@ if __name__ == "__main__":
     else:
         queryState = changeState(queryIdx, 0)
     
-    displayResults(queryState, closest_match_paths, relevance_flag, 4, 5)
+    submitted = False
+    if relevance_flag:
+        with st.form("relevance block", clear_on_submit=True):
+            submitted = st.form_submit_button("Submit")
+            displayResults(queryState, closest_match_paths, relevance_flag, 4, 5)
+    else:
+        displayResults(queryState, closest_match_paths, relevance_flag, 4, 5)
 
     st.sidebar.write(str(st.session_state["relevanceIdx"]))
+
+    if submitted:
+        st.experimental_rerun()
