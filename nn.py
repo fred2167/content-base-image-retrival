@@ -14,9 +14,10 @@ class PretrainModel(nn.Module):
     self.model = self.model.to(torch.float32)
   def forward(self, input):
   
-    feats = self.model(input)
-    feats = feats.squeeze().detach()
-    return feats.numpy()
+    with torch.no_grad():
+      feats = self.model(input)
+      feats = feats.squeeze().detach()
+      return feats.numpy()
 
 class HashInfo:
 
