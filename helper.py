@@ -37,3 +37,6 @@ def getFeatureWeights(posFeatures, eps = 1e-6):
       weights = np.ones((1, N)) / N
       
     return weights
+
+
+relevance_help = "change query image to reset relevance"

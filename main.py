@@ -58,7 +58,7 @@ if __name__ == "__main__":
     img_paths = helper.getImagePaths(img_folder)
 
     feature_fn_str = st.sidebar.radio("Features", ("Intensity", "Color Code", "Intensity + Color Code", "Neural Network"))
-    relevance_flag = st.sidebar.checkbox("Relevance")
+    relevance_flag = st.sidebar.checkbox("Relevance", help=helper.relevance_help)
     # feature_fn_strs = st.sidebar.multiselect("Features", ("Intensity", "Color Code", "Neural Network"), default="Intensity")
 
     st.title('Content Base Image Retrival')
