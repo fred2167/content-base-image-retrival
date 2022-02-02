@@ -6,7 +6,6 @@ import distance
 import collections
 
 
-
 def displayResults(queryState, paths, relevance_flag = False, num_columns = 3, num_rows = 3, ):
 
     img_idx = queryState * num_columns * num_rows
@@ -102,7 +101,7 @@ if __name__ == "__main__":
     else:
         displayResults(queryState, closest_match_paths, relevance_flag, 4, 5)
 
-    st.sidebar.write(str(st.session_state["relevanceIdx"]))
+    #st.sidebar.write(str(st.session_state["relevanceIdx"]))
 
     if submitted:
         st.experimental_rerun()
