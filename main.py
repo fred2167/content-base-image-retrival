@@ -3,7 +3,6 @@ import os
 import helper
 import histogram
 import distance
-import collections
 
 
 def displayResults(queryState, paths, relevance_flag = False, num_columns = 3, num_rows = 3, ):
@@ -58,7 +57,6 @@ if __name__ == "__main__":
 
     feature_fn_str = st.sidebar.radio("Features", ("Intensity", "Color Code", "Intensity + Color Code", "Neural Network"))
     relevance_flag = st.sidebar.checkbox("Relevance", help=helper.relevance_help)
-    # feature_fn_strs = st.sidebar.multiselect("Features", ("Intensity", "Color Code", "Neural Network"), default="Intensity")
 
     st.title('Content Base Image Retrival')
 
@@ -80,7 +78,6 @@ if __name__ == "__main__":
             
         closest_match_paths = distance.manhantanDistance(queryIdx, img_paths, features, weights)
 
-    # closest_match_paths = getClosetPaths(feature_fn_strs, queryIdx, img_paths)
 
     prev_flag = st.button("Previous")
     next_flag = st.button("Next Page")
