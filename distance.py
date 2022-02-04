@@ -16,7 +16,7 @@ def manhantanDistance(queryIdx, img_paths, features, weights=None):
     l1 = l1.sum(axis=1)
     smallestDistanceIndex = l1.argsort()
 
-    results = [img_paths[i] for i in smallestDistanceIndex if i != queryIdx]
+    results = [img_paths[i] for i in smallestDistanceIndex] 
     return results
 
 def localSensitiveHash(queryIdx, img_paths, features):

@@ -94,12 +94,11 @@ if __name__ == "__main__":
     if relevance_flag:
         with st.form("relevance block", clear_on_submit=True):
             submitted = st.form_submit_button("Submit")
-            st.session_state["relevanceIdx"].add(queryIdx)
-            displayResults(queryState, closest_match_paths, relevance_flag, 4, 5)
+            displayResults(queryState, closest_match_paths, relevance_flag, 5, 4)
     else:
-        displayResults(queryState, closest_match_paths, relevance_flag, 4, 5)
+        displayResults(queryState, closest_match_paths, relevance_flag, 5, 4)
 
-    #st.sidebar.write(str(st.session_state["relevanceIdx"]))
+    st.sidebar.write(str(st.session_state["relevanceIdx"]))
 
     if submitted:
         st.experimental_rerun()
