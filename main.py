@@ -55,7 +55,8 @@ if __name__ == "__main__":
     img_folder = os.path.join(os.getcwd(), "retrival-images")
     img_paths = helper.getImagePaths(img_folder)
 
-    feature_fn_str = st.sidebar.radio("Features", ("Intensity", "Color Code", "Intensity + Color Code", "Neural Network"))
+#    feature_fn_str = st.sidebar.radio("Features", ("Intensity", "Color Code", "Intensity + Color Code", "Neural Network"))
+    feature_fn_str = st.sidebar.radio("Features", ("Intensity", "Color Code", "Intensity + Color Code"))
     relevance_flag = st.sidebar.checkbox("Relevance", help=helper.relevance_help)
 
     st.title('Content Base Image Retrival')
