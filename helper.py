@@ -1,6 +1,5 @@
 import os
 import glob
-from turtle import pos
 import numpy as np
 import streamlit as st
 
