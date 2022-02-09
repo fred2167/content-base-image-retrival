@@ -19,6 +19,10 @@ def getRelevantFeatures(features, featureIdx):
     return features[idx]
 
 def getFeatureWeights(posFeatures, eps = 1e-6):
+
+    if len(posFeatures) == 0:
+      return None
+
     std = posFeatures.std(axis= 0)
     avg = posFeatures.mean(axis= 0)
 
